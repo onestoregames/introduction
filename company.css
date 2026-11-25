@@ -1,0 +1,32 @@
+/* ONE store 소개서(company.html) 전용. style.css 뒤에 읽힌다. 기존 규칙은 고치지 않고 덧붙이기만 한다. */
+html{scroll-padding-top:108px} /* 상단 바 56 + 챕터 메뉴 48 + 여유 */
+.card h4{font-size:15px;font-weight:800;margin:18px 0 10px;color:var(--ink)}
+.card ul{margin:10px 0 0}
+.card li+li{margin-top:6px}
+.nums .fn{grid-column:1/-1;margin:4px 0 0;color:var(--d-muted)}
+
+/* 연혁 */
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 22px 24px;margin:0}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-7px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--purple)}
+.tl b{display:block;font-size:20px;font-weight:800;color:var(--purple-ink);line-height:1.4}
+.tl span{display:block;font-size:16px;color:var(--ink)}
+
+/* 점유율·비중 막대. 기존 .bar 는 라벨 칸이 7em 이라 "Apple App Store" 가 두 줄로 꺾여 넓힌다. */
+.cbars .bar{grid-template-columns:10em 1fr 4em}
+.cbars.cmp .bar:not(.me) i::after{background:#c9c8e0}
+@media (max-width:560px){.cbars .bar{grid-template-columns:8.5em 1fr 3.6em}}
+
+/* 칩 목록(결제 수단·혜택·피처드 영역·게이머 여정) */
+.chips{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.chips li{margin:0;border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:15px;font-weight:600;color:var(--ink);background:#fff}
+.flow{counter-reset:step}
+.flow li::before{counter-increment:step;content:counter(step);margin-right:8px;font-weight:800;color:var(--purple-ink)}
+
+/* 챕터 고정 메뉴: 상단 바(56px) 바로 아래에 붙는다 */
+.chapters{position:sticky;top:56px;z-index:9;background:var(--navy);border-bottom:1px solid var(--navy-line)}
+.chapters .wrap{display:flex;gap:4px;align-items:center;height:48px;overflow-x:auto}
+.chapters a{flex:none;white-space:nowrap;padding:6px 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--d-muted);text-decoration:none}
+.chapters a:hover{background:#fff;color:var(--navy)}
+.chapters a:focus-visible{outline:2px solid #fff;outline-offset:-2px}
