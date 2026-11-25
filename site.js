@@ -57,6 +57,15 @@
     nav.languages && nav.languages.length ? nav.languages : [nav.language]);
   setRoot(lang);
 
+  // 중·일 화면은 첫 글자부터 Noto 로 그려야 새로고침 때 글꼴이 바뀌어 보이지 않는다(정적 preload 는 Paperlogy 만).
+  var noto = { zh: "NotoSC", ja: "NotoJP" }[lang];
+  if (noto) [400, 600, 800].forEach(function (w) {
+    var l = doc.createElement("link");
+    l.rel = "preload"; l.as = "font"; l.type = "font/woff2"; l.crossOrigin = "anonymous";
+    l.href = "fonts/" + noto + "-" + w + ".woff2";
+    doc.head.appendChild(l);
+  });
+
   doc.addEventListener("DOMContentLoaded", function () {
     setBody(lang);
     doc.addEventListener("click", function (e) {
