@@ -176,3 +176,14 @@ a.tag:hover{background:rgba(107,76,255,.22)}
 @keyframes eg-scroll{from{object-position:50% 0%}to{object-position:50% 100%}}
 @media (min-width:1000px){.eg-row{overflow:visible;gap:14px}.phone{flex:1 1 0;min-width:0}}
 @media (prefers-reduced-motion:reduce){.phone img{animation:none}.eg-row .screen{overflow:auto}}
+
+/* 입점 지원 구간 하단 안내(붉은색) */
+.warn-note{margin-top:20px}
+.warn-note p{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--red-ink)}
+/* 이유 카드 안 자세히 보기 링크 */
+#why .card .more{display:inline-block;margin-top:14px;font-weight:800;color:var(--purple-ink);text-decoration:none}
+#why .card .more:hover{text-decoration:underline}
+
+/* 프로그램 카드 링크 줄 */
+.svc .links{margin-top:auto;padding-top:16px;display:flex;gap:18px;flex-wrap:wrap}
+.svc .links .more{margin-top:0;padding-top:0}
