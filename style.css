@@ -179,6 +179,7 @@ a.tag:hover{background:rgba(107,76,255,.22)}
 
 /* 입점 지원 구간 하단 안내(붉은색) */
 .warn-note{margin-top:20px}
+.sec-head .warn-note{margin-top:10px}
 .warn-note p{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--red-ink)}
 /* 이유 카드 안 자세히 보기 링크 */
 #why .card .more{display:inline-block;margin-top:14px;font-weight:800;color:var(--purple-ink);text-decoration:none}
