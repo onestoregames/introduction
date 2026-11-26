@@ -43,9 +43,9 @@ ul{margin:0;padding-left:20px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:14px;font-weight:600;color:var(--d-muted)}
 .brand img{height:20px;width:auto;display:block}
 .lang-toggle{display:flex;border:1px solid #55507a;border-radius:999px;overflow:hidden;flex:none}
-.lang-toggle button{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:4px 12px;color:var(--d-muted)}
-.lang-toggle button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
-.lang-toggle button[aria-pressed="true"]{background:#fff;color:var(--navy)}
+.lang-toggle a{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:4px 12px;color:var(--d-muted)}
+.lang-toggle a:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+.lang-toggle a[aria-current="true"]{background:#fff;color:var(--navy)}
 
 /* 히어로 · 숫자 띠 */
 /* 위 겹: 아래로 갈수록 --navy-2 로 스며들어 숫자 띠와 이음선 없이 이어진다 */
@@ -153,7 +153,7 @@ td.k{font-weight:800;color:var(--purple-ink);white-space:nowrap} /* "120 (+20%)"
   .hero{padding:54px 0 44px}
   .bar{grid-template-columns:6.5em 1fr 3.6em}
   html[data-lang="ja"] .bar{grid-template-columns:8em 1fr 3.6em} /* サブカルチャー·シミュレーション 이 한 줄에 들어가는 폭 */
-  .lang-toggle button{padding:4px 9px;font-size:12px}
+  .lang-toggle a{padding:4px 9px;font-size:12px}
   .brand span{display:none!important}
   th,td{padding:8px}
 }

@@ -44,8 +44,9 @@
   }
 
   function setBody(lang) {
-    doc.querySelectorAll(".lang-toggle button").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.getAttribute("data-set") === lang));
+    doc.querySelectorAll(".lang-toggle a").forEach(function (b) {
+      if (b.getAttribute("data-set") === lang) b.setAttribute("aria-current", "true");
+      else b.removeAttribute("aria-current");
     });
     doc.querySelectorAll("a[data-lang-link]").forEach(function (a) {
       a.setAttribute("href", withLang(a.getAttribute("href"), lang));
@@ -66,15 +67,23 @@
     doc.head.appendChild(l);
   });
 
+  // 주소의 ?lang= 을 항상 현재 언어로 맞춘다 → 주소창 링크가 곧 그 언어의 개별 링크
+  function syncUrl() {
+    try { root.history.replaceState(null, "", withLang(root.location.pathname + root.location.search + root.location.hash, lang)); } catch (e) { /* 무시 */ }
+  }
+
   doc.addEventListener("DOMContentLoaded", function () {
     setBody(lang);
+    syncUrl();
     doc.addEventListener("click", function (e) {
-      var b = e.target.closest(".lang-toggle button");
+      var b = e.target.closest(".lang-toggle a");
       if (!b) return;
+      e.preventDefault();
       lang = b.getAttribute("data-set");
       setRoot(lang);
       setBody(lang);
       write(lang);
+      syncUrl();
     });
   });
 })(typeof window !== "undefined" ? window : globalThis);
