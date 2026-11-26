@@ -188,3 +188,7 @@ a.tag:hover{background:rgba(107,76,255,.22)}
 /* 프로그램 카드 링크 줄 */
 .svc .links{margin-top:auto;padding-top:16px;display:flex;gap:18px;flex-wrap:wrap}
 .svc .links .more{margin-top:0;padding-top:0}
+
+/* 대문 KPI 5칸 */
+.nums.n5 .wrap{grid-template-columns:repeat(5,1fr)}
+@media (max-width:860px){.nums.n5 .wrap{grid-template-columns:repeat(2,1fr)}.nums.n5 .num:last-child{grid-column:1/-1}}
