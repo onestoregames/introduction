@@ -25,8 +25,39 @@
     return href + (href.indexOf("?") >= 0 ? "&" : "?") + "lang=" + lang + hash;
   }
 
+  // 담당자 QR 레퍼럴(33_qr-referral). ?ref=<코드> 를 90일 보관하고 조회·신청 클릭을 집계 서버로 보낸다.
+  // 보내는 값은 코드·이벤트·언어뿐(개인정보 없음). ref 없이 온 방문자는 아무것도 보내지 않는다.
+  var REF_KEY = "introRef", SENT_KEY = "introRefSent", REF_TTL = 90 * 86400000;
+  var REF_ENDPOINT = "https://intro-ref.lsi7564.workers.dev/hit";
+
+  function parseRef(v) {
+    if (v == null) return null;
+    var s = String(v).trim().toLowerCase();
+    return /^[a-z0-9]{2,16}$/.test(s) ? s : null;
+  }
+
+  function kstDay(ms) { return new Date(ms + 9 * 3600000).toISOString().slice(0, 10); }
+
+  // 보관값 {code, ts} → 코드. 90일 지났거나 형식이 틀리면 null
+  function storedRef(raw, now) {
+    var o;
+    try { o = JSON.parse(raw); } catch (e) { return null; }
+    if (!o || !parseRef(o.code) || typeof o.ts !== "number" || now - o.ts > REF_TTL) return null;
+    return parseRef(o.code);
+  }
+
+  // 하루 1회 제한. sent = {"날짜|코드|이벤트": 1}. 보낼지와, 오늘 키만 남긴 새 객체를 돌려준다
+  function shouldSend(sent, day, code, ev) {
+    var next = {}, key = day + "|" + code + "|" + ev;
+    for (var k in sent || {}) if (k.indexOf(day + "|") === 0) next[k] = 1;
+    var send = !next[key];
+    next[key] = 1;
+    return { send: send, sent: next };
+  }
+
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { pickLang: pickLang, withLang: withLang };
+    module.exports = { pickLang: pickLang, withLang: withLang, parseRef: parseRef, kstDay: kstDay,
+      storedRef: storedRef, shouldSend: shouldSend };
     return;
   }
 
@@ -72,9 +103,37 @@
     try { root.history.replaceState(null, "", withLang(root.location.pathname + root.location.search + root.location.hash, lang)); } catch (e) { /* 무시 */ }
   }
 
+  function load(k) { try { return root.localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { root.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  var urlRef = null;
+  try { urlRef = parseRef(new URLSearchParams(root.location.search).get("ref")); } catch (e) { /* 무시 */ }
+  if (urlRef) store(REF_KEY, JSON.stringify({ code: urlRef, ts: Date.now() }));
+  var ref = urlRef || storedRef(load(REF_KEY), Date.now());
+  var memSent = {}; // 저장소를 못 쓰는 환경: 이 페이지 안에서만 하루 1회 제한
+
+  function hit(ev) {
+    if (!ref) return;
+    var sent = memSent, raw = load(SENT_KEY);
+    if (raw) { try { sent = JSON.parse(raw) || {}; } catch (e) { sent = {}; } }
+    var r = shouldSend(sent, kstDay(Date.now()), ref, ev);
+    if (!store(SENT_KEY, JSON.stringify(r.sent))) memSent = r.sent;
+    if (!r.send) return;
+    var body = JSON.stringify({ ref: ref, ev: ev, lang: lang });
+    try { if (root.navigator.sendBeacon && root.navigator.sendBeacon(REF_ENDPOINT, body)) return; } catch (e) { /* 아래 fetch 로 */ }
+    try {
+      root.fetch(REF_ENDPOINT, { method: "POST", keepalive: true, headers: { "Content-Type": "text/plain" }, body: body })
+        .catch(function () { /* 집계 실패는 화면에 영향 없음 */ });
+    } catch (e) { /* 무시 */ }
+  }
+
   doc.addEventListener("DOMContentLoaded", function () {
     setBody(lang);
     syncUrl();
+    if (urlRef) hit("visit");
+    doc.addEventListener("click", function (e) {
+      var f = e.target.closest && e.target.closest("a[data-form]");
+      if (f) hit(f.getAttribute("data-form") === "update" ? "apply_update" : "apply_new");
+    });
     doc.addEventListener("click", function (e) {
       var b = e.target.closest(".lang-toggle a");
       if (!b) return;
